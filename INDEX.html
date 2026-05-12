@@ -1440,6 +1440,10 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
 }
 </style>
 <style id="staffcard-mobile-editor-overrides">
+.mobile-menu-toggle {
+  display: none;
+}
+
 @media (max-width: 1080px) {
   :root {
     --font: 'SHSTC', 'Noto Serif TC', 'Songti TC', 'SimSun', serif;
@@ -1454,24 +1458,38 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
     --menu-line: rgba(0, 0, 0, 0.12);
     --accent: #595f73;
     --shadow-soft: 0 20px 48px rgba(82, 72, 54, 0.10);
-    --card-w: 295px;
-    --story-panel-w: min(500px, 100%);
+    --card-w: min(295px, calc(100vw - 56px));
+    --story-panel-w: min(640px, calc(100vw - 40px));
+  }
+
+  html,
+  body {
+    overscroll-behavior: none !important;
+  }
+
+  html.story-modal-open,
+  html.story-modal-open body {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
   }
 
   body {
-    padding: clamp(28px, 6vw, 44px) !important;
     background: var(--page-bg) !important;
+    overflow-x: hidden !important;
+    padding: clamp(20px, 5vw, 36px) !important;
   }
 
   .page-frame {
     width: min(1200px, 100%) !important;
-    min-height: calc(100dvh - clamp(56px, 12vw, 88px)) !important;
-    gap: clamp(24px, 4vw, 34px) !important;
+    min-height: calc(100dvh - clamp(40px, 10vw, 72px)) !important;
+    gap: clamp(20px, 4vw, 30px) !important;
   }
 
   .staff-shell {
     grid-template-columns: minmax(0, 1fr) !important;
-    gap: clamp(24px, 4vw, 34px) !important;
+    gap: clamp(20px, 4vw, 30px) !important;
+    min-height: 0 !important;
   }
 
   .page-heading,
@@ -1491,16 +1509,16 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
   }
 
   .page-kicker {
-    font-size: 13px !important;
+    font-size: clamp(11px, 2.2vw, 13px) !important;
     font-weight: 500 !important;
     font-family: var(--font) !important;
     letter-spacing: 0.58em !important;
     color: rgba(0, 0, 0, 0.32) !important;
-    translate: 32px 0px !important;
+    translate: clamp(16px, 4vw, 32px) 0 !important;
   }
 
   .page-title {
-    font-size: 26px !important;
+    font-size: clamp(22px, 4.3vw, 26px) !important;
     font-weight: 900 !important;
     font-family: var(--font) !important;
     letter-spacing: 0.68em !important;
@@ -1509,45 +1527,135 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
   }
 
   .staff-menu-panel {
+    position: relative !important;
+    z-index: 60 !important;
     border-right: none !important;
-    border-bottom: 1px solid var(--menu-line) !important;
+    border-bottom: none !important;
     padding-right: 0 !important;
-    padding-bottom: 18px !important;
-    gap: 18px !important;
+    padding-bottom: 0 !important;
+    gap: 12px !important;
+  }
+
+  html.story-modal-open .staff-menu-panel,
+  html.story-modal-open .site-credit {
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   .menu-title {
-    font-size: 15.5px !important;
+    font-size: clamp(12px, 2.4vw, 15.5px) !important;
     font-weight: 700 !important;
     font-family: var(--font) !important;
     letter-spacing: 0.52em !important;
     color: rgba(0, 0, 0, 0.28) !important;
-    translate: 50px 0px !important;
+    translate: clamp(18px, 5vw, 50px) 0 !important;
+  }
+
+  .mobile-menu-toggle {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    width: 100% !important;
+    border: 1px solid rgba(0, 0, 0, 0.10) !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    box-shadow: var(--shadow-soft) !important;
+    color: var(--accent) !important;
+    cursor: pointer !important;
+    padding: 14px 16px 13px !important;
+    text-align: left !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .mobile-menu-toggle::after {
+    content: '' !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-right: 1px solid currentColor !important;
+    border-bottom: 1px solid currentColor !important;
+    transform: translateY(-2px) rotate(45deg) !important;
+    transition: transform 0.28s var(--ease-out) !important;
+  }
+
+  .staff-menu-panel.is-menu-open .mobile-menu-toggle::after {
+    transform: translateY(2px) rotate(-135deg) !important;
+  }
+
+  .mobile-menu-kicker,
+  .mobile-menu-current {
+    display: block !important;
+    min-width: 0 !important;
+    font-family: var(--font) !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-menu-kicker {
+    margin-bottom: 6px !important;
+    font-size: 9px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.46em !important;
+    color: rgba(0, 0, 0, 0.28) !important;
+  }
+
+  .mobile-menu-current {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.42em !important;
+    color: var(--accent) !important;
   }
 
   .menu-list {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: calc(100% + 10px) !important;
     display: flex !important;
-    flex-direction: row !important;
-    gap: clamp(18px, 4vw, 28px) !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    padding: 0 4px 6px 0 !important;
-    scrollbar-width: none !important;
-    scroll-snap-type: x proximity;
+    flex-direction: column !important;
+    gap: 2px !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    border: 1px solid rgba(0, 0, 0, 0.10) !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow: 0 24px 54px rgba(82, 72, 54, 0.14) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(-8px) scale(0.985) !important;
+    transform-origin: top center !important;
+    transition:
+      opacity 0.24s var(--ease-out),
+      transform 0.32s var(--ease-out),
+      max-height 0.32s var(--ease-out),
+      padding 0.32s var(--ease-out) !important;
+  }
+
+  .staff-menu-panel.is-menu-open .menu-list {
+    max-height: min(48dvh, 340px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 8px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
   }
 
   .menu-list::-webkit-scrollbar {
-    display: none !important;
+    width: 4px !important;
+  }
+
+  .menu-list::-webkit-scrollbar-thumb {
+    background: rgba(70, 78, 102, 0.18) !important;
   }
 
   .menu-item {
+    width: 100% !important;
     flex: 0 0 auto !important;
     position: relative !important;
-    scroll-snap-align: start;
     border: none !important;
     border-radius: 0 !important;
     background: transparent !important;
-    padding: 12px 18px 12px 0 !important;
+    padding: 13px 26px 13px 0 !important;
     font-size: 16px !important;
     font-weight: 600 !important;
     font-family: var(--font) !important;
@@ -1555,6 +1663,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
     color: rgba(0, 0, 0, 0.38) !important;
     translate: 0px 0px !important;
     transform: none !important;
+    text-align: left !important;
   }
 
   .menu-item::before {
@@ -1575,7 +1684,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
     display: block !important;
     content: '' !important;
     position: absolute !important;
-    right: 0 !important;
+    right: 10px !important;
     top: 50% !important;
     width: 6px !important;
     height: 6px !important;
@@ -1589,7 +1698,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
   .menu-item:focus-visible,
   .menu-item.is-active {
     color: var(--accent) !important;
-    transform: translateX(6px) !important;
+    transform: translateX(4px) !important;
     outline: none !important;
   }
 
@@ -1615,6 +1724,8 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
   .viewer-panel {
     align-items: flex-start !important;
     justify-content: center !important;
+    min-height: 0 !important;
+    z-index: 1 !important;
   }
 
   .viewer-workspace {
@@ -1622,42 +1733,128 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
     flex-direction: column !important;
     align-items: center !important;
     row-gap: 0 !important;
+    min-height: 0 !important;
   }
 
   .viewer-workspace.is-story-open {
-    row-gap: 24px !important;
+    row-gap: 0 !important;
     column-gap: 0 !important;
   }
 
   .viewer-workspace.is-story-open .viewer-card-shell {
-    transform: scale(0.94) !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
   }
 
   .viewer-workspace.is-story-open .viewer-stage {
     height: auto !important;
     opacity: 1 !important;
     overflow: visible !important;
-    pointer-events: auto !important;
+    pointer-events: none !important;
     transform: none !important;
   }
 
-  .story-panel-shell,
-  .viewer-workspace.is-story-open .story-panel-shell,
-  .story-panel {
-    width: min(100%, var(--story-panel-w)) !important;
+  .face {
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    transform-style: preserve-3d !important;
+  }
+
+  .face.front {
+    transform: rotateY(0deg) translateZ(0.1px) !important;
+  }
+
+  .face.back {
+    transform: rotateY(180deg) translateZ(0.1px) !important;
+  }
+
+  .story-panel-shell {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100svh !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    padding:
+      max(16px, env(safe-area-inset-top))
+      clamp(16px, 5vw, 34px)
+      max(16px, env(safe-area-inset-bottom)) !important;
+    background: #f2f2f3 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(100%) !important;
+    transition:
+      opacity 0.28s var(--ease-out),
+      transform 0.48s var(--ease-out),
+      visibility 0s linear 0.48s !important;
+  }
+
+  @supports (height: 100dvh) {
+    .story-panel-shell {
+      height: 100dvh !important;
+    }
   }
 
   .viewer-workspace.is-story-open .story-panel-shell {
-    max-height: min(68dvh, 620px) !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100svh !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
     transform: translateY(0) !important;
+    transition:
+      opacity 0.28s var(--ease-out),
+      transform 0.48s var(--ease-out),
+      visibility 0s linear 0s !important;
+  }
+
+  @supports (height: 100dvh) {
+    .viewer-workspace.is-story-open .story-panel-shell {
+      height: 100dvh !important;
+    }
   }
 
   .story-panel {
-    height: min(68dvh, 620px) !important;
-    padding: 22px 22px 18px !important;
+    width: min(640px, 100%) !important;
+    height: 100% !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    padding: clamp(22px, 5vw, 36px) clamp(20px, 5vw, 34px) clamp(18px, 4vw, 28px) !important;
     border: 1px solid rgba(0, 0, 0, 0.10) !important;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(250, 250, 250, 0.93)), rgba(255, 255, 255, 0.92) !important;
-    box-shadow: var(--shadow-soft) !important;
+    background: #ffffff !important;
+    box-shadow: 0 28px 70px rgba(82, 72, 54, 0.16) !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) auto !important;
+    overflow: hidden !important;
+  }
+
+  .story-panel-header {
+    gap: 10px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .story-panel-copy {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    touch-action: pan-y !important;
+    padding-right: 10px !important;
+  }
+
+  .story-close-button {
+    align-self: flex-start !important;
+    min-height: 44px !important;
+    margin-top: 6px !important;
   }
 
   .f-org {
@@ -1801,87 +1998,169 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
 
 @media (max-width: 640px) {
   :root {
-    --card-w: min(295px, calc(100vw - 40px));
-    --story-panel-w: min(500px, calc(100vw - 40px));
+    --card-w: min(295px, calc(100vw - 44px), calc((100svh - 214px) / 1.531));
+    --story-panel-w: calc(100vw - 32px);
+  }
+
+  @supports (height: 100dvh) {
+    :root {
+      --card-w: min(295px, calc(100vw - 44px), calc((100dvh - 214px) / 1.531));
+    }
+  }
+
+  html,
+  body {
+    width: 100% !important;
+    height: 100vh !important;
+    height: 100svh !important;
+    overflow: hidden !important;
+  }
+
+  @supports (height: 100dvh) {
+    html,
+    body {
+      height: 100dvh !important;
+    }
   }
 
   body {
-    padding: clamp(20px, 5.5vw, 28px) !important;
+    padding: 16px !important;
   }
 
   .page-frame {
-    min-height: calc(100dvh - clamp(40px, 11vw, 56px)) !important;
-    gap: 22px !important;
+    height: calc(100svh - 32px) !important;
+    min-height: 0 !important;
+    gap: 14px !important;
+    overflow: hidden !important;
+  }
+
+  @supports (height: 100dvh) {
+    .page-frame {
+      height: calc(100dvh - 32px) !important;
+    }
+  }
+
+  .heading-main {
+    gap: 6px !important;
   }
 
   .page-heading {
-    gap: 10px !important;
+    flex: 0 0 auto !important;
+    gap: 8px !important;
   }
 
   .page-kicker {
-    font-size: clamp(11px, 3vw, 13px) !important;
-    letter-spacing: clamp(0.42em, 2vw, 0.58em) !important;
-    translate: clamp(14px, 5vw, 28px) 0 !important;
+    font-size: clamp(10px, 2.8vw, 12px) !important;
+    letter-spacing: clamp(0.34em, 1.7vw, 0.5em) !important;
+    translate: clamp(10px, 4vw, 18px) 0 !important;
   }
 
   .page-title {
-    font-size: clamp(21px, 6vw, 26px) !important;
-    letter-spacing: clamp(0.42em, 2.4vw, 0.56em) !important;
+    font-size: clamp(20px, 6.4vw, 25px) !important;
+    letter-spacing: clamp(0.36em, 2vw, 0.52em) !important;
+  }
+
+  .staff-shell {
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    gap: 14px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 
   .staff-menu-panel {
-    padding-bottom: 16px !important;
-    gap: 14px !important;
+    flex: 0 0 auto !important;
+    gap: 8px !important;
   }
 
   .menu-title {
-    font-size: clamp(13px, 3.4vw, 15.5px) !important;
-    translate: clamp(18px, 7vw, 38px) 0 !important;
+    font-size: clamp(11px, 3.1vw, 13px) !important;
+    translate: clamp(12px, 5vw, 24px) 0 !important;
   }
 
-  .menu-list {
-    gap: 18px !important;
-    padding-bottom: 4px !important;
+  .mobile-menu-toggle {
+    padding: 11px 13px 10px !important;
+  }
+
+  .mobile-menu-kicker {
+    margin-bottom: 4px !important;
+    font-size: 8px !important;
+  }
+
+  .mobile-menu-current {
+    font-size: clamp(13px, 3.9vw, 15px) !important;
+    letter-spacing: 0.34em !important;
+  }
+
+  .staff-menu-panel.is-menu-open .menu-list {
+    max-height: min(44svh, 300px) !important;
+  }
+
+  @supports (height: 100dvh) {
+    .staff-menu-panel.is-menu-open .menu-list {
+      max-height: min(44dvh, 300px) !important;
+    }
   }
 
   .menu-item {
-    padding: 10px 16px 10px 0 !important;
-    font-size: clamp(14px, 3.8vw, 16px) !important;
-    letter-spacing: 0.5em !important;
+    padding: 11px 24px 11px 0 !important;
+    font-size: clamp(13px, 3.7vw, 15px) !important;
+    letter-spacing: 0.44em !important;
   }
 
   .menu-item-label {
-    padding-left: 36px !important;
+    padding-left: 34px !important;
   }
 
   .menu-item.is-active::before {
-    width: 30px !important;
+    width: 28px !important;
   }
 
-  .viewer-workspace.is-story-open {
-    row-gap: 18px !important;
+  .viewer-panel {
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 
-  .viewer-workspace.is-story-open .viewer-card-shell {
-    transform: scale(0.9) !important;
+  .viewer-stage {
+    max-height: 100% !important;
+    align-items: flex-start !important;
   }
 
-  .viewer-workspace.is-story-open .story-panel-shell {
-    max-height: min(58dvh, 560px) !important;
+  .card-scene {
+    max-height: 100% !important;
+  }
+
+  .story-panel-shell {
+    padding:
+      max(10px, env(safe-area-inset-top))
+      10px
+      max(10px, env(safe-area-inset-bottom)) !important;
   }
 
   .story-panel {
-    height: min(58dvh, 560px) !important;
-    padding: 18px 18px 16px !important;
+    width: 100% !important;
+    padding: 18px 16px 14px !important;
+  }
+
+  .story-panel-header {
+    padding-bottom: 12px !important;
+  }
+
+  .story-panel-title {
+    font-size: clamp(18px, 5.2vw, 21px) !important;
+  }
+
+  .story-panel-copy {
+    font-size: 13px !important;
+    line-height: 1.86 !important;
   }
 
   .f-org {
     font-size: clamp(12px, 3.35vw, 16px) !important;
-    letter-spacing: clamp(0.52em, 1.7vw, 0.74em) !important;
+    letter-spacing: clamp(0.48em, 1.7vw, 0.74em) !important;
   }
 
   .f-watermark {
-    font-size: clamp(76px, 22vw, 90px) !important;
+    font-size: clamp(72px, 22vw, 90px) !important;
     translate: clamp(10px, 4vw, 20px) 0 !important;
   }
 
@@ -1894,20 +2173,11 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
   }
 
   .b-oath {
-    font-size: clamp(13px, 4.4vw, 17px) !important;
+    font-size: clamp(13px, 4.2vw, 17px) !important;
   }
 
   .b-org-text {
     font-size: clamp(10px, 3.1vw, 12px) !important;
-  }
-
-  .story-panel-title {
-    font-size: clamp(19px, 5.2vw, 22px) !important;
-  }
-
-  .story-panel-copy {
-    font-size: 13px !important;
-    line-height: 1.88 !important;
   }
 }
 </style>
@@ -2100,7 +2370,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
           "captionLabel": "時葉",
           "certificateType": "任命證",
           "watermarkText": "任命",
-          "name": "三野　望",
+          "name": "須笠　時葉",
           "role": "見習提燈者",
           "oath": "願託此身於白夜，\n於拂曉之際，\n承慈愛，受試煉。"
         },
@@ -2112,9 +2382,12 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
           "captionLabel": "2810",
           "certificateType": "歸屬證",
           "watermarkText": "歸屬",
-          "name": "三野　雄助",
+          "name": "▉▉　▉▉",
           "role": "白夜的御手",
-          "oath": "此身盡忠白夜，\n為其手，撫慰諸世之魂。"
+          "oath": "此身盡忠白夜，\n為其手，撫慰諸世之魂。",
+          "sealedNameButtonLabel": "▉▉　▉▉",
+          "whisper": "我還未能面對，自己過去的名字......",
+          "whisperAriaLabel": "點按查看被遮住名字的心聲"
         },
         {
           "id": "kinmoji",
@@ -2176,6 +2449,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
       // LOCKED_ARCHIVES_END
 
       const menuListEl = document.getElementById('menu-list');
+      const staffMenuPanelEl = document.querySelector('.staff-menu-panel');
       const viewerWorkspaceEl = document.getElementById('viewer-workspace');
       const viewerCardShellEl = document.getElementById('viewer-card-shell');
       const cardSceneEl = document.getElementById('card-scene');
@@ -2228,6 +2502,9 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
       let touchStartedOnNoFlip = false;
       let touchStartX = 0;
       let touchStartY = 0;
+      let mobileMenuToggleEl = null;
+      let mobileMenuCurrentEl = null;
+      let storyScrollY = 0;
 
       function wait(ms) {
         return new Promise(resolve => {
@@ -2275,6 +2552,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
       }
 
       async function unlockCardWithPassword(card, password) {
+        const lockedCardId = card.id;
         const unlocked = await openLockedArchive(card, password);
         if (!unlocked || !unlocked.card || typeof unlocked.card !== 'object') {
           throw new Error('Invalid locked archive.');
@@ -2286,6 +2564,9 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
           archiveMemo.set(unlocked.story.id || card.storyId || card.id, unlocked.story);
         }
         unlockedCardIds.add(card.id);
+        if (lockedCardId === 'sealed-6') {
+          revealTokihaName();
+        }
         return card;
       }
 
@@ -2392,6 +2673,15 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
         return staffCards.find(card => card.id === cardId);
       }
 
+      function revealTokihaName() {
+        const tokiha = getCardById('tokiha');
+        if (!tokiha) {
+          return;
+        }
+
+        tokiha.name = '三野　望';
+      }
+
       function getStoryId(card) {
         return card.storyId || card.id;
       }
@@ -2407,9 +2697,45 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
       function isModalOpen() {
         return activeModalCardId !== null;
       }
+      function isMobileViewport() {
+        return window.matchMedia('(max-width: 1080px)').matches;
+      }
 
+      function isMobileMenuOpen() {
+        return Boolean(staffMenuPanelEl && staffMenuPanelEl.classList.contains('is-menu-open'));
+      }
+
+      function lockStoryScroll() {
+        document.documentElement.classList.add('story-modal-open');
+
+        if (!isMobileViewport()) {
+          return;
+        }
+
+        storyScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${storyScrollY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function unlockStoryScroll() {
+        document.documentElement.classList.remove('story-modal-open');
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+
+        if (isMobileViewport()) {
+          window.scrollTo(0, storyScrollY);
+        }
+      }
       function isCardMotionLocked() {
-        return isSwitching || isStoryAnimating || isStoryOpen || isModalOpen();
+        return isSwitching || isStoryAnimating || isStoryOpen || isModalOpen() || isMobileMenuOpen();
       }
 
       function getMenuLabel(card) {
@@ -2419,6 +2745,62 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
         return card.revealedMenuLabel;
       }
 
+
+      function setMobileMenuOpen(nextOpen) {
+        if (!staffMenuPanelEl || !mobileMenuToggleEl) {
+          return;
+        }
+
+        staffMenuPanelEl.classList.toggle('is-menu-open', nextOpen);
+        mobileMenuToggleEl.setAttribute('aria-expanded', String(nextOpen));
+      }
+
+      function syncMobileMenuLabel() {
+        if (!mobileMenuCurrentEl || !currentCard) {
+          return;
+        }
+
+        mobileMenuCurrentEl.textContent = getMenuLabel(currentCard);
+      }
+
+      function initMobileMenu() {
+        if (!staffMenuPanelEl || mobileMenuToggleEl) {
+          return;
+        }
+
+        mobileMenuToggleEl = document.createElement('button');
+        mobileMenuToggleEl.type = 'button';
+        mobileMenuToggleEl.className = 'mobile-menu-toggle';
+        mobileMenuToggleEl.setAttribute('aria-controls', 'menu-list');
+        mobileMenuToggleEl.setAttribute('aria-expanded', 'false');
+
+        const labelWrap = document.createElement('span');
+        const kicker = document.createElement('span');
+        kicker.className = 'mobile-menu-kicker';
+        kicker.textContent = '\u4eba\u54e1\u4e00\u89bd';
+        mobileMenuCurrentEl = document.createElement('span');
+        mobileMenuCurrentEl.className = 'mobile-menu-current';
+
+        labelWrap.appendChild(kicker);
+        labelWrap.appendChild(mobileMenuCurrentEl);
+        mobileMenuToggleEl.appendChild(labelWrap);
+
+        staffMenuPanelEl.insertBefore(mobileMenuToggleEl, menuListEl);
+
+        mobileMenuToggleEl.addEventListener('click', event => {
+          event.stopPropagation();
+          setMobileMenuOpen(!staffMenuPanelEl.classList.contains('is-menu-open'));
+        });
+
+        document.addEventListener('click', event => {
+          if (staffMenuPanelEl.contains(event.target)) {
+            return;
+          }
+          setMobileMenuOpen(false);
+        });
+
+        syncMobileMenuLabel();
+      }
       function scheduleTilt() {
         cancelAnimationFrame(tiltFrame);
         tiltFrame = requestAnimationFrame(() => {
@@ -2483,6 +2865,8 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
 
           menuListEl.appendChild(button);
         });
+
+        syncMobileMenuLabel();
       }
 
       function renderPhoto(card) {
@@ -2708,6 +3092,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
           return;
         }
 
+        setMobileMenuOpen(false);
         hideWhisper();
         resetTilt(true);
 
@@ -2722,6 +3107,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
         activeStoryCardId = card.id;
         isStoryOpen = true;
         isStoryAnimating = true;
+        lockStoryScroll();
 
         requestAnimationFrame(() => {
           viewerWorkspaceEl.classList.add('is-story-open');
@@ -2746,6 +3132,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
         storyCloseButtonEl.disabled = true;
 
         await wait(STORY_TRANSITION_DURATION);
+        unlockStoryScroll();
         isStoryAnimating = false;
         isStoryOpen = false;
         activeStoryCardId = null;
@@ -2815,6 +3202,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
         }
 
         lastFocusedMenuButton = menuButton;
+        setMobileMenuOpen(false);
 
         if (targetCard.locked && !isCardUnlocked(targetCard)) {
           hideWhisper();
@@ -2987,6 +3375,12 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
         closeStoryPanel({ restoreFocus: true });
       });
 
+      storyPanelShellEl.addEventListener('click', event => {
+        if (event.target === storyPanelShellEl && window.matchMedia('(max-width: 1080px)').matches) {
+          closeStoryPanel({ restoreFocus: true });
+        }
+      });
+
       sealedNameButtonEl.addEventListener('click', showWhisper);
       sealedNameButtonEl.addEventListener('keydown', event => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -3024,6 +3418,14 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
           return;
         }
 
+        if (staffMenuPanelEl && staffMenuPanelEl.classList.contains('is-menu-open')) {
+          setMobileMenuOpen(false);
+          if (mobileMenuToggleEl) {
+            mobileMenuToggleEl.focus();
+          }
+          return;
+        }
+
         hideWhisper();
       });
 
@@ -3038,6 +3440,7 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
       clearStoryContent();
       initFlipAndTilt();
       initOathPainting();
+      initMobileMenu();
       renderCard(currentCard);
       renderMenu();
       clearOathPaint();
