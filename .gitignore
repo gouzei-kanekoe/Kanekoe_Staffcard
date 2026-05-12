@@ -1,0 +1,24 @@
+# Local authoring sources; do not publish story drafts.
+story-source.local.json
+story-source*.json
+locked-source.local.json
+encode-stories.js
+
+# Local editor/tuner tools.
+story-editor.html
+*editor*.html
+*_*.html
+
+# Temporary and backup files.
+*.bak
+*.backup
+*.tmp
+*.temp
+*.old
+*_work.html
+*_work_*.html
+.DS_Store
+Thumbs.db
+
+# Assistant/tooling state.
+.claude/
