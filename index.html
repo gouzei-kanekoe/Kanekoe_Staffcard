@@ -1830,6 +1830,7 @@
     font-family: var(--font) !important;
     letter-spacing: 0.22em !important;
     translate: 0px 0px !important;
+    max-height: 500px !important;
   }
 
   .b-org-text {
@@ -3179,7 +3180,12 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
           let hasVisibleText = false;
           paragraphData.runs.forEach(runData => {
             const span = document.createElement('span');
-            span.textContent = runData.text;
+            runData.text.split('\n').forEach((line, i, arr) => {
+              span.appendChild(document.createTextNode(line));
+              if (i < arr.length - 1) {
+                span.appendChild(document.createElement('br'));
+              }
+            });
 
             if (runData.bold) {
               span.style.fontWeight = '700';
