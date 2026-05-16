@@ -1,0 +1,43 @@
+# Publishable files for GitHub Pages:
+# - index.html
+# - README.md (optional)
+# - .gitignore
+# Everything below is local source, tooling, tests, or bulky generated assets.
+
+# Local authoring sources; do not publish story drafts or locked-source inputs.
+story-source.local.json
+story-source*.json
+locked-source.local.json
+locked-source*.json
+
+# Local encoding/recovery/build tools. Some contain local paths or unlock passwords.
+encode-stories.js
+recover-staffcard.js
+
+# Local editor/tuner/test files.
+story-editor.html
+story-editor*.html
+story-editor*.json
+*editor*.html
+*_*.html
+
+# Local font assets; index.html now uses Google Fonts.
+fonts/
+*.otf
+*.ttf
+*.woff
+*.woff2
+
+# Temporary and backup files.
+*.bak
+*.backup
+*.tmp
+*.temp
+*.old
+*_work.html
+*_work_*.html
+.DS_Store
+Thumbs.db
+
+# Assistant/tooling state.
+.claude/
