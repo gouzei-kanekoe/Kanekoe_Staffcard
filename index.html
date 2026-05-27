@@ -74,11 +74,29 @@
       padding: clamp(22px, 4vw, 44px);
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     button,
     input {
       font: inherit;
+    }
+
+    body,
+    body * {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      -webkit-touch-callout: none !important;
+    }
+
+    input,
+    textarea,
+    select,
+    [contenteditable],
+    [contenteditable] * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+      -webkit-touch-callout: default !important;
     }
 
     .page-frame {
@@ -344,8 +362,8 @@
       font-weight: 500;
       letter-spacing: 0.08em;
       line-height: 1.9;
-      user-select: text;
-      -webkit-user-select: text;
+      user-select: none;
+      -webkit-user-select: none;
       overscroll-behavior: contain;
     }
 
@@ -2657,12 +2675,78 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
         const isDeveloperChord = hasPrimary && event.shiftKey && ['i', 'j', 'c'].includes(key);
         const isMacDeveloperChord = event.metaKey && event.altKey && ['i', 'j', 'c'].includes(key);
         const isSourceView = hasPrimary && key === 'u';
+        const isClipboardChord = hasPrimary && ['c', 'x'].includes(key);
+        const isSelectAll = hasPrimary && key === 'a';
 
         if (isPrintScreen) {
           return 'printscreen';
         }
 
-        return isF12 || isDeveloperChord || isMacDeveloperChord || isSourceView;
+        if (isF12 || isDeveloperChord || isMacDeveloperChord || isSourceView) {
+          return 'developer';
+        }
+
+        if (isClipboardChord) {
+          return 'clipboard';
+        }
+
+        if (isSelectAll) {
+          return 'selection';
+        }
+
+        return false;
+      }
+
+      function getEventElement(target) {
+        if (target instanceof Element) {
+          return target;
+        }
+
+        return target?.parentElement instanceof Element ? target.parentElement : null;
+      }
+
+      function isEditableTarget(target) {
+        const element = getEventElement(target);
+        if (!element) {
+          return false;
+        }
+
+        const editable = element.closest('input, textarea, select, [contenteditable]');
+        return Boolean(editable && (
+          editable.matches('input, textarea, select') ||
+          editable.isContentEditable
+        ));
+      }
+
+      function clearProtectedSelection() {
+        if (isEditableTarget(document.activeElement)) {
+          return;
+        }
+
+        const selection = window.getSelection ? window.getSelection() : null;
+        if (!selection || selection.isCollapsed) {
+          return;
+        }
+
+        if (isEditableTarget(selection.anchorNode) || isEditableTarget(selection.focusNode)) {
+          return;
+        }
+
+        selection.removeAllRanges();
+      }
+
+      function blockClipboardEvent(event) {
+        if (isEditableTarget(event.target)) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.clipboardData) {
+          event.clipboardData.clearData();
+        }
+        clearProtectedSelection();
+        showNotice('\u6b64\u9801\u6587\u5b57\u5df2\u53d7\u4fdd\u8b77\u3002', 1300);
       }
 
       document.addEventListener('contextmenu', event => {
@@ -2670,9 +2754,24 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
         showNotice('此頁已關閉右鍵選單。', 1300);
       });
 
+      document.addEventListener('selectstart', event => {
+        if (isEditableTarget(event.target)) {
+          return;
+        }
+
+        event.preventDefault();
+      }, true);
+
+      document.addEventListener('copy', blockClipboardEvent, true);
+      document.addEventListener('cut', blockClipboardEvent, true);
+
+      document.addEventListener('selectionchange', () => {
+        window.requestAnimationFrame(clearProtectedSelection);
+      });
+
       document.addEventListener('keydown', event => {
         const blocked = isBlockedShortcut(event);
-        if (!blocked) {
+        if (!blocked || isEditableTarget(event.target)) {
           return;
         }
 
@@ -2681,6 +2780,12 @@ STAFFCARD_DESKTOP_EDITOR_DATA_END -->
 
         if (blocked === 'printscreen') {
           scrubScreen();
+          return;
+        }
+
+        if (blocked === 'clipboard' || blocked === 'selection') {
+          clearProtectedSelection();
+          showNotice('\u6b64\u9801\u6587\u5b57\u5df2\u53d7\u4fdd\u8b77\u3002', 1300);
           return;
         }
 
